@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supply Chain Control System | Osama Sunaallah</title>
+<meta name="description" content="An Excel + VBA procurement control system: purchase requests, purchase orders, invoices and live dashboards in one workbook. Portfolio case study with anonymized demo data.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Supply Chain Control System | Osama Sunaallah">
+<meta property="og:description" content="Excel + VBA procurement control system: PR and PO tracking, invoice linking and automated reports. Portfolio case study.">
+<meta property="og:image" content="https://osamasunaallah.github.io/ET-Supply-Chain/thumbnail.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="627">
+<meta property="og:url" content="https://osamasunaallah.github.io/ET-Supply-Chain/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="thumbnail.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#F8FAFC; --bg-2:#EEF3FB; --card:#FFFFFF; --fg:#0F1E46; --fg-soft:#334155; --muted:#5B6B82;
+  --border:#DCE5F3; --primary:#1E40AF; --primary-2:#3B82F6; --on-primary:#FFFFFF;
+  --accent:#D97706; --accent-soft:#FEF3C7; --ok:#047857; --ok-soft:#D1FAE5; --warn:#B45309; --warn-soft:#FEF3C7;
+  --bad:#B91C1C; --bad-soft:#FEE2E2; --info:#1D4ED8; --info-soft:#DBEAFE; --grey-soft:#E2E8F0;
+  --shadow:0 1px 2px rgba(15,30,70,.06),0 8px 24px rgba(15,30,70,.06);
+  --shadow-lg:0 2px 4px rgba(15,30,70,.06),0 24px 48px rgba(15,30,70,.12);
+  --radius:14px; --ease:cubic-bezier(.22,1,.36,1);
+  --grid-line:rgba(30,64,175,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1022; --bg-2:#0F1830; --card:#111C36; --fg:#E6ECF8; --fg-soft:#C3CEE3; --muted:#93A3BF;
+    --border:#22325A; --primary:#6C9BFF; --primary-2:#93B4FF; --on-primary:#0A1022;
+    --accent:#F5B041; --accent-soft:#3A2A0C; --ok:#34D399; --ok-soft:#0E3328; --warn:#FBBF24; --warn-soft:#3A2A0C;
+    --bad:#F87171; --bad-soft:#3B1418; --info:#93B4FF; --info-soft:#18284D; --grey-soft:#1E2A47;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); --shadow-lg:0 24px 48px rgba(0,0,0,.4);
+    --grid-line:rgba(147,180,255,.06);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1022; --bg-2:#0F1830; --card:#111C36; --fg:#E6ECF8; --fg-soft:#C3CEE3; --muted:#93A3BF;
+  --border:#22325A; --primary:#6C9BFF; --primary-2:#93B4FF; --on-primary:#0A1022;
+  --accent:#F5B041; --accent-soft:#3A2A0C; --ok:#34D399; --ok-soft:#0E3328; --warn:#FBBF24; --warn-soft:#3A2A0C;
+  --bad:#F87171; --bad-soft:#3B1418; --info:#93B4FF; --info-soft:#18284D; --grey-soft:#1E2A47;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); --shadow-lg:0 24px 48px rgba(0,0,0,.4);
+  --grid-line:rgba(147,180,255,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 "Fira Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased;transition:background .4s var(--ease),color .4s var(--ease)}
+a{color:var(--primary)}
+code,.mono{font-family:"Fira Code",ui-monospace,monospace}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:3px solid var(--primary-2);outline-offset:2px;border-radius:6px}
+.skip{position:absolute;left:-999px}.skip:focus{left:16px;top:12px;background:var(--card);padding:8px 12px;z-index:99}
+
+/* nav */
+header.nav{position:sticky;top:0;z-index:50;backdrop-filter:saturate(1.4) blur(14px);background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s}
+header.nav.scrolled{border-color:var(--border);box-shadow:0 6px 20px rgba(15,30,70,.06)}
+.nav-in{display:flex;align-items:center;gap:20px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--fg);text-decoration:none;letter-spacing:-.01em}
+.brand-mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--primary-2));display:grid;place-items:center;color:#fff;box-shadow:0 6px 16px rgba(30,64,175,.35)}
+.nav-links{display:flex;gap:4px;margin-left:auto}
+.nav-links a{color:var(--fg-soft);text-decoration:none;font-size:14px;font-weight:500;padding:8px 12px;border-radius:8px;transition:background .2s,color .2s}
+.nav-links a:hover,.nav-links a.active{background:var(--bg-2);color:var(--primary)}
+.icon-btn{width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--fg);display:grid;place-items:center;cursor:pointer;transition:transform .2s var(--ease),border-color .2s}
+.icon-btn:hover{transform:translateY(-1px);border-color:var(--primary-2)}
+.icon-btn svg{width:18px;height:18px}
+@media (max-width:860px){.nav-links{display:none}.nav-in>.icon-btn{margin-left:auto}}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding:72px 0 56px}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 70% 60% at 50% 30%,#000 30%,transparent 75%);pointer-events:none}
+.glow{position:absolute;width:520px;height:520px;border-radius:50%;filter:blur(80px);opacity:.35;pointer-events:none;animation:float 14s ease-in-out infinite}
+.glow.a{background:var(--primary-2);top:-180px;right:-120px}
+.glow.b{background:var(--accent);bottom:-260px;left:-160px;opacity:.18;animation-delay:-6s}
+@keyframes float{50%{transform:translate(-30px,30px) scale(1.06)}}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+@media (max-width:960px){.hero-grid{grid-template-columns:1fr}}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font:500 13px/1 "Fira Code",monospace;color:var(--primary);background:var(--info-soft);padding:8px 12px;border-radius:999px;letter-spacing:.02em}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 var(--ok);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+h1{font-size:clamp(34px,5vw,56px);line-height:1.06;letter-spacing:-.035em;margin:18px 0 18px;font-weight:800}
+h1 .hl{background:linear-gradient(90deg,var(--primary),var(--primary-2) 60%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:18px;color:var(--fg-soft);max-width:560px;margin:0 0 28px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 20px;border-radius:11px;font-weight:600;font-size:15px;text-decoration:none;cursor:pointer;border:1px solid transparent;transition:transform .25s var(--ease),box-shadow .25s,background .2s}
+.btn svg{width:18px;height:18px}
+.btn-primary{background:var(--primary);color:var(--on-primary);box-shadow:0 8px 20px rgba(30,64,175,.28)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(30,64,175,.34)}
+.btn-ghost{background:var(--card);color:var(--fg);border-color:var(--border)}
+.btn-ghost:hover{transform:translateY(-2px);border-color:var(--primary-2)}
+.meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:28px;color:var(--muted);font-size:14px}
+.meta span{display:inline-flex;align-items:center;gap:6px}.meta svg{width:16px;height:16px;color:var(--primary)}
+
+/* hero visual */
+.stack{position:relative;height:420px;perspective:1400px}
+.pane{position:absolute;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden}
+.pane .bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border);font:500 12px "Fira Code",monospace;color:var(--muted)}
+.pane .bar i{width:9px;height:9px;border-radius:50%;background:var(--grey-soft);display:inline-block}
+.pane.p1{inset:0 60px 90px 0;transform:rotateY(-8deg) rotateX(4deg);animation:rise 1s var(--ease) both}
+.pane.p2{right:0;bottom:0;width:58%;transform:rotateY(-8deg) rotateX(4deg) translateZ(60px);animation:rise 1s .18s var(--ease) both}
+@keyframes rise{from{opacity:0;transform:rotateY(-8deg) rotateX(4deg) translateY(40px)}}
+.mini-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px}
+.mini-kpi{background:var(--bg-2);border-radius:10px;padding:10px 12px}
+.mini-kpi b{display:block;font:600 22px "Fira Code",monospace;color:var(--fg)}
+.mini-kpi small{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.mini-bars{display:flex;align-items:flex-end;gap:8px;height:120px;padding:4px 14px 14px}
+.mini-bars span{flex:1;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,var(--primary-2),var(--primary));transform-origin:bottom;animation:grow 1.2s var(--ease) both}
+.mini-bars span:nth-child(3n){background:linear-gradient(180deg,#FBBF24,var(--accent))}
+@keyframes grow{from{transform:scaleY(0)}}
+.mini-rows{padding:8px 12px 12px}
+.mini-row{display:flex;justify-content:space-between;align-items:center;font:13px "Fira Code",monospace;padding:8px 6px;border-bottom:1px dashed var(--border);opacity:0;animation:slidein .6s var(--ease) forwards}
+.mini-row:last-child{border:0}
+@keyframes slidein{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+@media (max-width:960px){.stack{height:380px;margin-top:8px}}
+@media (max-width:520px){.pane.p1{inset:0 0 110px 0}.pane.p2{width:80%}}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:56px}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.stat b{font:600 clamp(26px,3.4vw,34px)/1.1 "Fira Code",monospace;color:var(--primary);display:block}
+.stat span{color:var(--muted);font-size:14px}
+
+/* sections */
+section{padding:84px 0}
+.sec-head{max-width:720px;margin-bottom:40px}
+.kicker{font:600 12px "Fira Code",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h2{font-size:clamp(28px,3.6vw,40px);line-height:1.12;letter-spacing:-.025em;margin:10px 0 12px}
+.sec-head p{color:var(--fg-soft);margin:0;font-size:17px}
+.alt{background:var(--bg-2);border-block:1px solid var(--border)}
+
+/* before/after */
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:760px){.ba{grid-template-columns:1fr}}
+.ba-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow)}
+.ba-card h3{margin:0 0 14px;font-size:18px;display:flex;align-items:center;gap:10px}
+.ba-card ul{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.ba-card li{display:flex;gap:10px;color:var(--fg-soft)}
+.ba-card li svg{flex:none;width:20px;height:20px;margin-top:2px}
+.ba-card.before li svg{color:var(--bad)}.ba-card.after li svg{color:var(--ok)}
+.ba-card.after{border-color:color-mix(in srgb,var(--primary-2) 45%,var(--border));background:linear-gradient(180deg,color-mix(in srgb,var(--info-soft) 55%,var(--card)),var(--card))}
+.tag{font:600 11px "Fira Code",monospace;padding:4px 8px;border-radius:6px;letter-spacing:.06em}
+
+/* workflow */
+.flow{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+@media (max-width:980px){.flow{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:560px){.flow{grid-template-columns:1fr}}
+.flow-line{position:absolute;left:4%;right:4%;top:34px;height:3px;background:var(--border);border-radius:3px;overflow:hidden}
+.flow-line i{position:absolute;inset:0;background:linear-gradient(90deg,var(--primary),var(--primary-2),var(--accent));transform:scaleX(0);transform-origin:left;transition:transform 1.8s var(--ease)}
+.flow.in .flow-line i{transform:scaleX(1)}
+@media (max-width:980px){.flow-line{display:none}}
+.step{position:relative;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px 16px;box-shadow:var(--shadow);transition:transform .3s var(--ease),border-color .3s,box-shadow .3s}
+.step:hover{transform:translateY(-4px);border-color:var(--primary-2);box-shadow:var(--shadow-lg)}
+.step-n{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--primary);color:var(--on-primary);font:600 14px "Fira Code",monospace;margin-bottom:12px;position:relative;z-index:1}
+.step h4{margin:0 0 6px;font-size:15px}
+.step p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.5}
+
+/* demo */
+.tabs{display:inline-flex;gap:4px;background:var(--card);border:1px solid var(--border);padding:5px;border-radius:12px;box-shadow:var(--shadow);position:relative;flex-wrap:wrap}
+.tab{position:relative;z-index:1;border:0;background:none;color:var(--fg-soft);font:600 14px "Fira Sans";padding:10px 16px;border-radius:8px;cursor:pointer;min-height:42px;display:flex;align-items:center;gap:8px;transition:color .25s}
+.tab svg{width:16px;height:16px}
+.tab[aria-selected="true"]{color:var(--on-primary)}
+.tab-ink{position:absolute;z-index:0;top:5px;height:calc(100% - 10px);border-radius:8px;background:var(--primary);transition:transform .45s var(--ease),width .45s var(--ease)}
+.panel{margin-top:22px;animation:panelIn .5s var(--ease)}
+.panel[hidden]{display:none}
+@keyframes panelIn{from{opacity:0;transform:translateY(12px)}}
+.demo-note{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:14px}
+.demo-note svg{width:16px;height:16px;color:var(--accent)}
+
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+@media (max-width:980px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c,var(--primary))}
+.kpi small{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.kpi b{font:600 28px/1.2 "Fira Code",monospace;color:var(--fg)}
+.charts{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
+@media (max-width:860px){.charts{grid-template-columns:1fr}}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.chart-card h4{margin:0 0 10px;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.chart-card h4 span{font:500 12px "Fira Code",monospace;color:var(--muted)}
+.chart-box{position:relative;height:240px}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.search{flex:1 1 300px;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:0 14px;min-height:46px;box-shadow:var(--shadow);transition:border-color .2s,box-shadow .2s}
+.search:focus-within{border-color:var(--primary-2);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary-2) 22%,transparent)}
+.search svg{width:18px;height:18px;color:var(--muted);flex:none}
+.search input{flex:1;border:0;background:none;color:var(--fg);font:15px "Fira Sans";min-height:44px;outline:none}
+.search label{position:absolute;left:-9999px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--border);background:var(--card);color:var(--fg-soft);font:600 12.5px "Fira Sans";padding:0 12px;min-height:36px;border-radius:999px;cursor:pointer;transition:all .2s var(--ease)}
+.chip:hover{border-color:var(--primary-2)}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.count{font:500 13px "Fira Code",monospace;color:var(--muted);margin-left:auto}
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:auto;max-height:520px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px;min-width:860px}
+thead th{position:sticky;top:0;z-index:1;background:var(--primary);color:#fff;text-align:left;font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;padding:11px 12px;white-space:nowrap}
+:root[data-theme="dark"] thead th{color:var(--on-primary)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) thead th{color:var(--on-primary)}}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap;color:var(--fg-soft)}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:var(--bg-2)}
+tbody tr.first td{border-top:2px solid color-mix(in srgb,var(--primary) 35%,var(--border))}
+tbody tr.anim{animation:rowIn .4s var(--ease) both}
+@keyframes rowIn{from{opacity:0;transform:translateY(6px)}}
+td.num{font-family:"Fira Code",monospace;text-align:right}
+td.ref{font-family:"Fira Code",monospace;color:var(--primary);font-weight:500}
+td.ref a{text-decoration:none;border-bottom:1px dashed currentColor}
+.st{display:inline-block;font:600 11px "Fira Code",monospace;padding:4px 8px;border-radius:6px;letter-spacing:.04em}
+.st-RECEIVED{background:var(--ok-soft);color:var(--ok)}
+.st-ORDERED,.st-OPEN{background:var(--info-soft);color:var(--info)}
+.st-PARTIAL{background:var(--warn-soft);color:var(--warn)}
+.st-NOT-ORDERED{background:var(--bad-soft);color:var(--bad)}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+mark{background:var(--accent-soft);color:inherit;border-radius:3px;padding:0 2px}
+
+/* features */
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:900px){.features{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:580px){.features{grid-template-columns:1fr}}
+.feat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);transition:transform .3s var(--ease),box-shadow .3s,border-color .3s}
+.feat:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary-2)}
+.feat-ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--info-soft);color:var(--primary);margin-bottom:14px;transition:transform .4s var(--ease)}
+.feat:hover .feat-ic{transform:rotate(-8deg) scale(1.08)}
+.feat-ic svg{width:22px;height:22px}
+.feat h3{margin:0 0 6px;font-size:17px}
+.feat p{margin:0;color:var(--muted);font-size:14.5px}
+.feat code{font-size:12px;background:var(--bg-2);padding:2px 6px;border-radius:5px;color:var(--fg-soft)}
+
+/* code */
+.code-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.code-grid>*,.hero-grid>*,.ba>*,.charts>*{min-width:0}
+@media (max-width:900px){.code-grid{grid-template-columns:1fr}}
+.code{background:#0B1430;color:#D6E2FF;border-radius:var(--radius);padding:18px 20px;font:13px/1.65 "Fira Code",monospace;overflow:auto;box-shadow:var(--shadow-lg);border:1px solid #1B2A55}
+.code .k{color:#7DB3FF}.code .s{color:#F5C77E}.code .c{color:#6B7FA8;font-style:italic}.code .f{color:#9EF0C9}
+.modules{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.mod{display:flex;justify-content:space-between;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font:13px "Fira Code",monospace}
+.mod span{color:var(--muted)}
+.mod .barx{height:4px;background:var(--bg-2);border-radius:4px;margin-top:6px;overflow:hidden}
+.mod .barx i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-2));transform:scaleX(0);transform-origin:left;transition:transform 1.2s var(--ease)}
+.in .mod .barx i{transform:scaleX(var(--w))}
+
+/* skills */
+.skills{display:flex;flex-wrap:wrap;gap:10px}
+.skill{padding:10px 16px;border-radius:999px;background:var(--card);border:1px solid var(--border);font-weight:500;font-size:14.5px;color:var(--fg-soft);transition:transform .25s var(--ease),border-color .25s}
+.skill:hover{transform:translateY(-2px);border-color:var(--accent)}
+footer{padding:40px 0 56px;border-top:1px solid var(--border);color:var(--muted);font-size:14px}
+.foot{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+.disclaimer{display:flex;gap:10px;align-items:flex-start;background:var(--accent-soft);color:var(--fg);border-radius:12px;padding:14px 16px;font-size:14px;margin-bottom:28px}
+.disclaimer svg{width:20px;height:20px;color:var(--accent);flex:none;margin-top:1px}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.stagger>*{opacity:0;transform:translateY(18px) scale(.98);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.stagger.in>*{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .reveal,.stagger>*{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 7H6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+  <symbol id="i-archive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9M10 13h4"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></symbol>
+  <symbol id="i-in" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.2c0-1.2 0-2.9-1.8-2.9s-2 1.4-2 2.8V21h-4z"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></symbol>
+</svg>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Back to top">
+      <span class="brand-mark"><svg width="18" height="18"><use href="#i-box"/></svg></span>
+      Supply Chain Control
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#problem">Problem</a><a href="#workflow">Workflow</a><a href="#demo">Live demo</a><a href="#automation">Automation</a><a href="#skills">Skills</a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" aria-label="Switch colour theme"><svg><use href="#i-moon"/></svg></button>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero" id="top">
+  <div class="glow a"></div><div class="glow b"></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="reveal">
+        <span class="eyebrow"><span class="dot"></span>Excel · VBA · Procurement automation</span>
+        <h1>One workbook that runs purchasing, <span class="hl">from request to invoice.</span></h1>
+        <p class="lead">I designed and built a supply chain control system for a growing engineering company. It turns purchase request and purchase order PDFs into live trackers, links every line to its invoice, and sends the team daily status reports, all inside Excel.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#demo">Explore the live demo <svg><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-ghost" href="#workflow">See the workflow</a>
+        </div>
+        <div class="meta">
+          <span><svg><use href="#i-users"/></svg>Built &amp; maintained by Osama Sunaallah</span>
+          <span><svg><use href="#i-shield"/></svg>Demo uses placeholder data</span>
+        </div>
+      </div>
+      <div class="stack" aria-hidden="true">
+        <div class="pane p1">
+          <div class="bar"><i></i><i></i><i></i>&nbsp; dashboard.xlsm</div>
+          <div class="mini-kpis">
+            <div class="mini-kpi"><small>Open PRs</small><b data-count="12">0</b></div>
+            <div class="mini-kpi"><small>Open POs</small><b data-count="18">0</b></div>
+            <div class="mini-kpi"><small>Received</small><b data-count="86" data-suffix="%">0</b></div>
+          </div>
+          <div class="mini-bars">
+            <span style="height:45%;animation-delay:.3s"></span><span style="height:70%;animation-delay:.38s"></span><span style="height:55%;animation-delay:.46s"></span><span style="height:88%;animation-delay:.54s"></span><span style="height:62%;animation-delay:.62s"></span><span style="height:76%;animation-delay:.7s"></span><span style="height:40%;animation-delay:.78s"></span><span style="height:95%;animation-delay:.86s"></span>
+          </div>
+        </div>
+        <div class="pane p2">
+          <div class="bar"><i></i><i></i><i></i>&nbsp; PO Tracker</div>
+          <div class="mini-rows">
+            <div class="mini-row" style="animation-delay:.9s"><span>PO-1024</span><span class="st st-RECEIVED">RECEIVED</span></div>
+            <div class="mini-row" style="animation-delay:1.05s"><span>PO-1025</span><span class="st st-PARTIAL">PARTIAL</span></div>
+            <div class="mini-row" style="animation-delay:1.2s"><span>PO-1026</span><span class="st st-OPEN">OPEN</span></div>
+            <div class="mini-row" style="animation-delay:1.35s"><span>PO-1027</span><span class="st st-RECEIVED">RECEIVED</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="stats stagger" id="stats">
+      <div class="stat"><b data-count="6000" data-suffix="+">0</b><span>lines of VBA I wrote</span></div>
+      <div class="stat"><b data-count="16">0</b><span>VBA modules</span></div>
+      <div class="stat"><b data-count="2300" data-suffix="+">0</b><span>PO lines tracked</span></div>
+      <div class="stat"><b data-count="3">0</b><span>automated PDF reports</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="problem">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">01 · The problem</span>
+      <h2>Purchasing lived in PDFs, emails and memory.</h2>
+      <p>With many projects running at once, nobody could quickly answer "Has this been ordered? Has it arrived? Where's the invoice?" I built the tool to answer all three in seconds.</p>
+    </div>
+    <div class="ba stagger">
+      <div class="ba-card before">
+        <h3><span class="tag" style="background:var(--bad-soft);color:var(--bad)">BEFORE</span> Manual tracking</h3>
+        <ul>
+          <li><svg><use href="#i-x"/></svg>Purchase requests typed by hand from PDFs, line by line</li>
+          <li><svg><use href="#i-x"/></svg>No single view of what is ordered, partial or still waiting</li>
+          <li><svg><use href="#i-x"/></svg>Invoices filed in folders with no link back to the order</li>
+          <li><svg><use href="#i-x"/></svg>Status updates collected by phone and chat every morning</li>
+        </ul>
+      </div>
+      <div class="ba-card after">
+        <h3><span class="tag" style="background:var(--ok-soft);color:var(--ok)">AFTER</span> Supply Chain Control</h3>
+        <ul>
+          <li><svg><use href="#i-check"/></svg>One click imports new PRs and POs straight from their PDFs</li>
+          <li><svg><use href="#i-check"/></svg>Every line shows its status, balance, deadline and owner</li>
+          <li><svg><use href="#i-check"/></svg>Invoice numbers become clickable links to the right PDF</li>
+          <li><svg><use href="#i-check"/></svg>Daily status reports are built as PDFs and emailed automatically</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="workflow">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">02 · Workflow</span>
+      <h2>From request to closed order, end to end.</h2>
+      <p>Each stage feeds the next automatically. Data is entered once, then reused everywhere it's needed.</p>
+    </div>
+    <div class="flow stagger" id="flow">
+      <div class="flow-line"><i></i></div>
+      <div class="step"><div class="step-n">1</div><h4>PR received</h4><p>Engineers raise purchase requests as PDFs in a shared folder.</p></div>
+      <div class="step"><div class="step-n">2</div><h4>Auto-import</h4><p>VBA reads each PDF, parses items, quantities and job numbers, and spots revisions.</p></div>
+      <div class="step"><div class="step-n">3</div><h4>Supply Chain Master</h4><p>Lines are tracked by PR with ordered qty, balance, deadline and owner.</p></div>
+      <div class="step"><div class="step-n">4</div><h4>PO Tracker</h4><p>Issued POs are imported and matched back to their PR lines.</p></div>
+      <div class="step"><div class="step-n">5</div><h4>Receive &amp; invoice</h4><p>Received quantities sync back, and invoices are linked and dated.</p></div>
+      <div class="step"><div class="step-n">6</div><h4>Close &amp; report</h4><p>Completed PRs move to the archive, and the dashboard and reports refresh.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="demo">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">03 · Live demo</span>
+      <h2>Try the three main views.</h2>
+      <p>This is a faithful web recreation of the workbook's Dashboard, Supply Chain Master and PO Tracker. Search works the way it does in Excel: type a job, PR, PO, item or supplier.</p>
+    </div>
+
+    <div class="tabs reveal" role="tablist" aria-label="Workbook views" id="tabs">
+      <span class="tab-ink" id="ink"></span>
+      <button class="tab" role="tab" id="t-dash" aria-controls="p-dash" aria-selected="true"><svg><use href="#i-chart"/></svg>Dashboard</button>
+      <button class="tab" role="tab" id="t-scm" aria-controls="p-scm" aria-selected="false" tabindex="-1"><svg><use href="#i-list"/></svg>Supply Chain Master</button>
+      <button class="tab" role="tab" id="t-po" aria-controls="p-po" aria-selected="false" tabindex="-1"><svg><use href="#i-cart"/></svg>PO Tracker</button>
+    </div>
+
+    <div class="panel" role="tabpanel" id="p-dash" aria-labelledby="t-dash">
+      <div class="kpis" id="kpis"></div>
+      <div class="charts">
+        <div class="chart-card"><h4>Lines by status <span>PR lines</span></h4><div class="chart-box"><canvas id="c1" aria-label="Doughnut chart of purchase request lines by status"></canvas></div></div>
+        <div class="chart-card"><h4>Open lines by person <span>who owns what</span></h4><div class="chart-box"><canvas id="c2" aria-label="Bar chart of open lines per responsible person"></canvas></div></div>
+        <div class="chart-card"><h4>New PRs per week <span>last 8 weeks</span></h4><div class="chart-box"><canvas id="c3" aria-label="Line chart of new purchase requests per week"></canvas></div></div>
+        <div class="chart-card"><h4>Open POs by supplier <span>top 6</span></h4><div class="chart-box"><canvas id="c4" aria-label="Bar chart of open purchase orders by supplier"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="panel" role="tabpanel" id="p-scm" aria-labelledby="t-scm" hidden>
+      <div class="toolbar">
+        <div class="search"><svg><use href="#i-search"/></svg><label for="q-scm">Search purchase requests</label><input id="q-scm" type="search" placeholder="Type a job (Job 104), PR (PR-012), item or person…" autocomplete="off"></div>
+        <div class="chips" id="f-scm" role="group" aria-label="Filter by status">
+          <button class="chip" aria-pressed="true" data-v="ALL">All</button>
+          <button class="chip" aria-pressed="false" data-v="NOT ORDERED">Not ordered</button>
+          <button class="chip" aria-pressed="false" data-v="PARTIAL">Partial</button>
+          <button class="chip" aria-pressed="false" data-v="ORDERED">Ordered</button>
+          <button class="chip" aria-pressed="false" data-v="RECEIVED">Received</button>
+        </div>
+        <span class="count" id="n-scm" aria-live="polite"></span>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>PR No.</th><th>PR Date</th><th>Job No.</th><th>Item Description</th><th>Qty</th><th>Unit</th><th>Ordered</th><th>Balance</th><th>Deadline</th><th>Responsible</th><th>Status</th><th>PO No.</th><th>Supplier</th></tr></thead>
+        <tbody id="b-scm"></tbody>
+      </table></div>
+    </div>
+
+    <div class="panel" role="tabpanel" id="p-po" aria-labelledby="t-po" hidden>
+      <div class="toolbar">
+        <div class="search"><svg><use href="#i-search"/></svg><label for="q-po">Search purchase orders</label><input id="q-po" type="search" placeholder="Type a PO (PO-1012), supplier, job or item…" autocomplete="off"></div>
+        <div class="chips" id="f-po" role="group" aria-label="Filter by status">
+          <button class="chip" aria-pressed="true" data-v="ALL">All</button>
+          <button class="chip" aria-pressed="false" data-v="OPEN">Open</button>
+          <button class="chip" aria-pressed="false" data-v="PARTIAL">Partial</button>
+          <button class="chip" aria-pressed="false" data-v="RECEIVED">Received</button>
+        </div>
+        <span class="count" id="n-po" aria-live="polite"></span>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>PO No.</th><th>PO Date</th><th>Supplier</th><th>Item Description</th><th>Qty</th><th>Unit</th><th>Received</th><th>Balance</th><th>Delivery</th><th>Job No.</th><th>Status</th><th>Invoice No.</th><th>Unit Price</th><th>Total (SAR)</th></tr></thead>
+        <tbody id="b-po"></tbody>
+      </table></div>
+    </div>
+    <p class="demo-note"><svg><use href="#i-info"/></svg>All names, items, job numbers and prices here are generated placeholders, not real company data.</p>
+  </div>
+</section>
+
+<section id="automation">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">04 · Under the hood</span>
+      <h2>Automation that saves hours every week.</h2>
+      <p>Buttons on each sheet run VBA macros I wrote. Each one replaces a repetitive manual task.</p>
+    </div>
+    <div class="features stagger">
+      <div class="feat"><div class="feat-ic"><svg><use href="#i-file"/></svg></div><h3>PDF import</h3><p>Extracts text from PR and PO PDFs, parses headers and item tables, assigns lines to jobs and flags revised documents. <code>modImport</code></p></div>
+      <div class="feat"><div class="feat-ic"><svg><use href="#i-link"/></svg></div><h3>Invoice linking</h3><p>Finds the right invoice PDF in each supplier's folder, scores possible matches, and turns the invoice number into a link. <code>modLinkLines</code></p></div>
+      <div class="feat"><div class="feat-ic"><svg><use href="#i-sync"/></svg></div><h3>Receipt sync</h3><p>Matches PO lines to PR lines by item codes, sizes and words, then pushes received quantities and prices back to the master. <code>modPOSync</code></p></div>
+      <div class="feat"><div class="feat-ic"><svg><use href="#i-mail"/></svg></div><h3>Emailed PDF reports</h3><p>Builds paginated daily status, open PO and invoice pending reports, and opens them ready to send in Outlook. <code>modPdfPages</code></p></div>
+      <div class="feat"><div class="feat-ic"><svg><use href="#i-search"/></svg></div><h3>Instant search</h3><p>A search bar on each sheet filters by job, PR, PO, item or person, and understands short and full job number formats. <code>modSearch</code></p></div>
+      <div class="feat"><div class="feat-ic"><svg><use href="#i-archive"/></svg></div><h3>Auto-archive &amp; backups</h3><p>Moves fully received PRs to Closed PR, and saves a timestamped backup before every structural change. <code>Module1</code></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="code">
+  <div class="wrap code-grid">
+    <div class="reveal">
+      <span class="kicker">05 · Code</span>
+      <h2>Clean, modular VBA.</h2>
+      <p style="color:var(--fg-soft)">The logic is split into focused modules: import, sync, linking, reporting, layout and search. Each one finds columns by header name, so the sheets can change without breaking anything.</p>
+      <pre class="code" aria-label="Simplified VBA example"><span class="c">' Simplified: find a column by its header, not a fixed letter</span>
+<span class="k">Function</span> <span class="f">ColOf</span>(ws <span class="k">As</span> Worksheet, header <span class="k">As String</span>) <span class="k">As Long</span>
+    <span class="k">Dim</span> c <span class="k">As</span> Range
+    <span class="k">Set</span> c = ws.Rows(<span class="f">HeaderRow</span>(ws)).Find(header, _
+            LookAt:=xlWhole, MatchCase:=<span class="k">False</span>)
+    <span class="k">If Not</span> c <span class="k">Is Nothing Then</span> ColOf = c.Column
+<span class="k">End Function</span>
+
+<span class="c">' Status of a PR line from ordered vs. received qty</span>
+status = IIf(recv >= qty, <span class="s">"RECEIVED"</span>, _
+         IIf(recv > 0, <span class="s">"PARTIAL"</span>, _
+         IIf(ordered > 0, <span class="s">"ORDERED"</span>, <span class="s">"NOT ORDERED"</span>)))</pre>
+    </div>
+    <div class="reveal" id="mods">
+      <h3 style="margin:0 0 12px">Modules by size</h3>
+      <div class="modules">
+        <div class="mod"><div style="flex:1">modImport<div class="barx"><i style="--w:1"></i></div></div><span>1,300</span></div>
+        <div class="mod"><div style="flex:1">Module1 (reports)<div class="barx"><i style="--w:.97"></i></div></div><span>1,263</span></div>
+        <div class="mod"><div style="flex:1">modLinkLines<div class="barx"><i style="--w:.53"></i></div></div><span>684</span></div>
+        <div class="mod"><div style="flex:1">modPOSync<div class="barx"><i style="--w:.49"></i></div></div><span>639</span></div>
+        <div class="mod"><div style="flex:1">POTracker<div class="barx"><i style="--w:.46"></i></div></div><span>593</span></div>
+        <div class="mod"><div style="flex:1">modSearch<div class="barx"><i style="--w:.18"></i></div></div><span>234</span></div>
+        <div class="mod"><div style="flex:1">modButtons<div class="barx"><i style="--w:.18"></i></div></div><span>233</span></div>
+        <div class="mod"><div style="flex:1">modDataFix<div class="barx"><i style="--w:.15"></i></div></div><span>199</span></div>
+        <div class="mod"><div style="flex:1">modInvoice<div class="barx"><i style="--w:.15"></i></div></div><span>198</span></div>
+        <div class="mod"><div style="flex:1">modUpdate<div class="barx"><i style="--w:.15"></i></div></div><span>197</span></div>
+        <div class="mod"><div style="flex:1">modPdfPages<div class="barx"><i style="--w:.15"></i></div></div><span>196</span></div>
+        <div class="mod"><div style="flex:1">modTrkBlock<div class="barx"><i style="--w:.14"></i></div></div><span>176</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">06 · Skills demonstrated</span>
+      <h2>What this project shows.</h2>
+    </div>
+    <div class="skills stagger">
+      <span class="skill">Procurement process design</span><span class="skill">Purchase requisition &amp; PO control</span><span class="skill">Material requirements planning</span><span class="skill">VBA automation</span><span class="skill">PDF data extraction</span><span class="skill">Fuzzy matching &amp; data cleansing</span><span class="skill">Dashboard design</span><span class="skill">Excel dynamic arrays</span><span class="skill">Reporting automation</span><span class="skill">Process improvement</span><span class="skill">Stakeholder reporting</span>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="disclaimer"><svg><use href="#i-shield"/></svg><span><b>Confidentiality.</b> This page is a portfolio recreation. Company names, suppliers, people, items, job numbers and prices are replaced with placeholders such as "Item 1", "PR-001" and "Supplier A".</span></div>
+    <div class="foot">
+      <span>© 2026 Osama Sunaallah · Industrial Engineer, Supply Chain &amp; Planning</span>
+      <a class="btn btn-ghost" href="https://www.linkedin.com/in/osamasunaallah" target="_blank" rel="noopener"><svg><use href="#i-in"/></svg>Connect on LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(()=>{
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* theme */
+const root=document.documentElement, themeBtn=document.getElementById('themeBtn');
+const isDark=()=>root.dataset.theme? root.dataset.theme==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+const setIcon=()=>themeBtn.innerHTML=`<svg><use href="#i-${isDark()?'sun':'moon'}"/></svg>`;
+try{const t=localStorage.getItem('scc-theme'); if(t) root.dataset.theme=t;}catch(e){}
+setIcon();
+themeBtn.addEventListener('click',()=>{root.dataset.theme=isDark()?'light':'dark';try{localStorage.setItem('scc-theme',root.dataset.theme)}catch(e){};setIcon();drawCharts();});
+
+/* nav */
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>10),{passive:true});
+const links=[...document.querySelectorAll('.nav-links a')];
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});
+links.forEach(a=>{const s=document.querySelector(a.getAttribute('href')); if(s) spy.observe(s)});
+
+/* counters */
+const fmt=n=>n.toLocaleString('en-US');
+function count(el){const end=+el.dataset.count,suf=el.dataset.suffix||'';if(reduce){el.textContent=fmt(end)+suf;return}
+  const t0=performance.now(),d=1400;const step=t=>{const p=Math.min(1,(t-t0)/d),e=1-Math.pow(1-p,4);el.textContent=fmt(Math.round(end*e))+suf;if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step);}
+
+/* reveal */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const el=e.target;el.classList.add('in');
+  if(el.classList.contains('stagger'))[...el.children].forEach((c,i)=>c.style.transitionDelay=(i*70)+'ms');
+  el.querySelectorAll('[data-count]').forEach(count);io.unobserve(el);}),{threshold:.15});
+document.querySelectorAll('.reveal,.stagger,#mods').forEach(el=>io.observe(el));
+document.querySelectorAll('.stack [data-count]').forEach(el=>setTimeout(()=>count(el),500));
+
+/* ---------- demo data (placeholders) ---------- */
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const pick=a=>a[Math.floor(rnd()*a.length)];
+const people=['Engineer 1','Engineer 2','Engineer 3','Engineer 4'];
+const suppliers=['Supplier A','Supplier B','Supplier C','Supplier D','Supplier E','Supplier F','Supplier G','Supplier H'];
+const units=['Nos','Mtr','Set','Box','Roll'];
+const jobs=['Job 101','Job 102','Job 103','Job 104','Job 105','Job 106','General Project'];
+const today=new Date(2026,9,25);
+const d2s=d=>d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'}).replace(/ /g,'-');
+const addD=(d,n)=>new Date(d.getTime()+n*864e5);
+let item=1;
+const prLines=[];
+for(let p=1;p<=18;p++){
+  const date=addD(today,-Math.floor(rnd()*55)-2),job=pick(jobs),who=pick(people),n=2+Math.floor(rnd()*4);
+  const age=(today-date)/864e5, deadline=addD(date,14+Math.floor(rnd()*20));
+  for(let i=0;i<n;i++){
+    const qty=[1,2,4,5,10,12,20,25,50][Math.floor(rnd()*9)];
+    let r=rnd(), st = age>35 ? (r<.8?'RECEIVED':'PARTIAL') : age>15 ? (r<.45?'RECEIVED':r<.7?'ORDERED':r<.85?'PARTIAL':'NOT ORDERED') : (r<.15?'RECEIVED':r<.45?'ORDERED':r<.6?'PARTIAL':'NOT ORDERED');
+    const ordered = st==='NOT ORDERED'?0 : st==='PARTIAL'?Math.max(1,Math.floor(qty/2)) : qty;
+    const recv = st==='RECEIVED'?qty : st==='PARTIAL'?Math.floor(ordered/2):0;
+    prLines.push({pr:'PR-'+String(p).padStart(3,'0'),date,job,item:'Item '+item++,qty,unit:pick(units),ordered,balance:qty-ordered,deadline,who,st,
+      po:st==='NOT ORDERED'?'':'PO-'+(1000+Math.ceil(p*1.4)),sup:st==='NOT ORDERED'?'':pick(suppliers),recv,price:Math.round((20+rnd()*900))});
+  }
+}
+const poLines=prLines.filter(l=>l.po).map(l=>{const st=l.recv>=l.ordered?'RECEIVED':l.recv>0?'PARTIAL':'OPEN';
+  return {po:l.po,date:addD(l.date,1+Math.floor(rnd()*4)),sup:l.sup,item:l.item,qty:l.ordered,unit:l.unit,recv:l.recv,balance:l.ordered-l.recv,
+  deliv:pick(['Ex-Stock','1 week','2 weeks','3-4 weeks']),job:l.job,st,inv:st==='OPEN'?'':'INV-'+(5000+Math.floor(rnd()*900)),price:l.price,total:Math.round(l.ordered*l.price*1.15)}});
+poLines.sort((a,b)=>a.po.localeCompare(b.po));
+prLines.sort((a,b)=>b.pr.localeCompare(a.pr));
+
+/* ---------- tables ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hl=(s,q)=>{s=esc(s);if(!q)return s;const i=s.toLowerCase().indexOf(q.toLowerCase());return i<0?s:s.slice(0,i)+'<mark>'+s.slice(i,i+q.length)+'</mark>'+s.slice(i+q.length)};
+const stc=s=>`<span class="st st-${s.replace(' ','-')}">${s}</span>`;
+function norm(q){q=q.trim();const m=q.match(/^(\d{3})$/);return m?'Job '+m[1]:q;}
+function render(kind){
+  const qEl=document.getElementById('q-'+kind),f=document.querySelector(`#f-${kind} [aria-pressed="true"]`).dataset.v,q=norm(qEl.value);
+  const rows=(kind==='scm'?prLines:poLines).filter(l=>(f==='ALL'||l.st===f)&&(!q||Object.values(l).some(v=>String(v instanceof Date?d2s(v):v).toLowerCase().includes(q.toLowerCase()))));
+  const body=document.getElementById('b-'+kind);let last='',html='';
+  rows.forEach((l,i)=>{const key=kind==='scm'?l.pr:l.po,first=key!==last;last=key;const dl=reduce?0:Math.min(i,14)*25;
+    html+= kind==='scm'
+      ? `<tr class="anim${first?' first':''}" style="animation-delay:${dl}ms"><td class="ref">${first?hl(l.pr,q):''}</td><td>${first?d2s(l.date):''}</td><td>${first?hl(l.job,q):''}</td><td>${hl(l.item,q)}</td><td class="num">${l.qty}</td><td>${l.unit}</td><td class="num">${l.ordered}</td><td class="num">${l.balance}</td><td>${d2s(l.deadline)}</td><td>${hl(l.who,q)}</td><td>${stc(l.st)}</td><td class="ref">${hl(l.po,q)}</td><td>${hl(l.sup,q)}</td></tr>`
+      : `<tr class="anim${first?' first':''}" style="animation-delay:${dl}ms"><td class="ref">${first?hl(l.po,q):''}</td><td>${first?d2s(l.date):''}</td><td>${first?hl(l.sup,q):''}</td><td>${hl(l.item,q)}</td><td class="num">${l.qty}</td><td>${l.unit}</td><td class="num">${l.recv}</td><td class="num">${l.balance}</td><td>${l.deliv}</td><td>${hl(l.job,q)}</td><td>${stc(l.st)}</td><td class="ref">${l.inv?`<a href="#demo" title="Opens the invoice PDF in the real workbook">${hl(l.inv,q)}</a>`:''}</td><td class="num">${fmt(l.price)}</td><td class="num">${fmt(l.total)}</td></tr>`;});
+  body.innerHTML=html||`<tr><td colspan="14" class="empty">No lines match "${esc(q)}". Try a job like 104 or a status chip.</td></tr>`;
+  const groups=new Set(rows.map(l=>kind==='scm'?l.pr:l.po)).size;
+  document.getElementById('n-'+kind).textContent=`${groups} ${kind==='scm'?'PRs':'POs'} · ${rows.length} lines`;
+}
+['scm','po'].forEach(k=>{
+  let t;document.getElementById('q-'+k).addEventListener('input',()=>{clearTimeout(t);t=setTimeout(()=>render(k),120)});
+  document.getElementById('f-'+k).addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;
+    b.parentElement.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c===b));render(k);});
+  render(k);
+});
+
+/* ---------- KPIs ---------- */
+const openPR=new Set(prLines.filter(l=>l.st!=='RECEIVED').map(l=>l.pr));
+const oldest=Math.max(...prLines.filter(l=>l.st!=='RECEIVED').map(l=>Math.round((today-l.date)/864e5)));
+const k=[['Open PRs',openPR.size,'var(--primary)'],['Open lines',prLines.filter(l=>l.st!=='RECEIVED').length,'var(--primary-2)'],['Not ordered',prLines.filter(l=>l.st==='NOT ORDERED').length,'var(--bad)'],['Oldest open PR (days)',oldest,'var(--accent)'],['Open POs',new Set(poLines.filter(l=>l.st!=='RECEIVED').map(l=>l.po)).size,'var(--ok)']];
+const kp=document.getElementById('kpis');kp.classList.add('stagger');
+kp.innerHTML=k.map(([t,v,c])=>`<div class="kpi" style="--c:${c}"><small>${t}</small><b data-count="${v}">0</b></div>`).join('');
+io.observe(kp);
+
+/* ---------- charts ---------- */
+const charts=[];
+const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
+function drawCharts(){
+  if(!window.Chart)return;
+  charts.forEach(c=>c.destroy());charts.length=0;
+  const fg=css('--fg-soft'),grid=css('--border'),P=css('--primary'),P2=css('--primary-2'),A=css('--accent'),OK=css('--ok'),BAD=css('--bad'),W=css('--warn');
+  Chart.defaults.font.family='Fira Sans';Chart.defaults.color=fg;
+  const base={responsive:true,maintainAspectRatio:false,animation:reduce?false:{duration:1100,easing:'easeOutQuart'},plugins:{legend:{labels:{boxWidth:12,usePointStyle:true}},tooltip:{backgroundColor:'#0B1430',padding:10,cornerRadius:8}}};
+  const sc={x:{grid:{display:false}},y:{grid:{color:grid},beginAtZero:true,ticks:{precision:0}}};
+  const sts=['NOT ORDERED','PARTIAL','ORDERED','RECEIVED'];
+  const [c1,c2,c3,c4]=['c1','c2','c3','c4'].map(id=>document.getElementById(id));
+  charts.push(new Chart(c1,{type:'doughnut',data:{labels:sts.map(s=>s[0]+s.slice(1).toLowerCase()),datasets:[{data:sts.map(s=>prLines.filter(l=>l.st===s).length),backgroundColor:[BAD,W,P2,OK],borderColor:css('--card'),borderWidth:3,hoverOffset:8}]},options:{...base,cutout:'64%',plugins:{...base.plugins,legend:{position:'right',labels:{boxWidth:12,usePointStyle:true}}}}}));
+  charts.push(new Chart(c2,{type:'bar',data:{labels:people,datasets:[{label:'Open lines',data:people.map(p=>prLines.filter(l=>l.who===p&&l.st!=='RECEIVED').length),backgroundColor:P,borderRadius:8,maxBarThickness:46}]},options:{...base,plugins:{...base.plugins,legend:{display:false}},scales:sc}}));
+  const weeks=[...Array(8)].map((_,i)=>addD(today,-7*(7-i)));
+  const prDates=[...new Map(prLines.map(l=>[l.pr,l.date])).values()];
+  charts.push(new Chart(c3,{type:'line',data:{labels:weeks.map(w=>w.toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit'})),datasets:[{label:'New PRs',data:weeks.map(w=>prDates.filter(d=>d>=w&&d<addD(w,7)).length),borderColor:A,backgroundColor:A+'33',fill:true,tension:.4,pointRadius:4,pointHoverRadius:7}]},options:{...base,plugins:{...base.plugins,legend:{display:false}},scales:sc}}));
+  const openBy=suppliers.map(s=>[s,new Set(poLines.filter(l=>l.sup===s&&l.st!=='RECEIVED').map(l=>l.po)).size]).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  charts.push(new Chart(c4,{type:'bar',data:{labels:openBy.map(x=>x[0]),datasets:[{label:'Open POs',data:openBy.map(x=>x[1]),backgroundColor:P2,borderRadius:8,maxBarThickness:28}]},options:{...base,indexAxis:'y',plugins:{...base.plugins,legend:{display:false}},scales:{x:{grid:{color:grid},beginAtZero:true,ticks:{precision:0}},y:{grid:{display:false}}}}}));
+}
+const chartIO=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){drawCharts();chartIO.disconnect()}},{threshold:.2});
+chartIO.observe(document.getElementById('p-dash'));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(!root.dataset.theme)drawCharts()});
+
+/* ---------- tabs ---------- */
+const tabs=[...document.querySelectorAll('.tab')],ink=document.getElementById('ink');
+const moveInk=t=>{ink.style.width=t.offsetWidth+'px';ink.style.transform=`translateX(${t.offsetLeft-5}px)`;ink.style.left='5px'};
+function select(t,focus){tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on});
+  moveInk(t);if(focus)t.focus();if(t.id==='t-dash')drawCharts();}
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>select(t));
+  t.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){e.preventDefault();select(tabs[(i+d+tabs.length)%tabs.length],true)}})});
+requestAnimationFrame(()=>moveInk(tabs[0]));addEventListener('resize',()=>moveInk(tabs.find(t=>t.getAttribute('aria-selected')==='true')));
+})();
+</script>
+</body>
+</html>
