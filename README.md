@@ -4,7 +4,7 @@
 
 An Excel + VBA procurement control system that tracks purchasing from request to invoice.
 
-**Live case study:** https://osamasunaallah.github.io/ET-Supply-Chain/
+**Live case study:** https://osamasunaallah.github.io/Supply-Chain/
 
 ## What it does
 - Imports purchase requests and purchase orders directly from PDF
