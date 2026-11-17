@@ -163,7 +163,7 @@ h2{font-size:clamp(28px,3.6vw,40px);line-height:1.12;letter-spacing:-.025em;marg
 .tab{position:relative;z-index:1;border:0;background:none;color:var(--fg-soft);font:600 14px "Fira Sans";padding:10px 16px;border-radius:8px;cursor:pointer;min-height:42px;display:flex;align-items:center;gap:8px;transition:color .25s}
 .tab svg{width:16px;height:16px}
 .tab[aria-selected="true"]{color:var(--on-primary)}
-.tab-ink{position:absolute;z-index:0;top:5px;height:calc(100% - 10px);border-radius:8px;background:var(--primary);transition:transform .45s var(--ease),width .45s var(--ease)}
+.tab-ink{position:absolute;z-index:0;top:5px;height:calc(100% - 10px);border-radius:8px;background:var(--primary);transition:transform .25s var(--ease),width .25s var(--ease)}
 .panel{margin-top:22px;animation:panelIn .5s var(--ease)}
 .panel[hidden]{display:none}
 @keyframes panelIn{from{opacity:0;transform:translateY(12px)}}
@@ -191,7 +191,7 @@ h2{font-size:clamp(28px,3.6vw,40px);line-height:1.12;letter-spacing:-.025em;marg
 .search input{flex:1;border:0;background:none;color:var(--fg);font:15px "Fira Sans";min-height:44px;outline:none}
 .search label{position:absolute;left:-9999px}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{border:1px solid var(--border);background:var(--card);color:var(--fg-soft);font:600 12.5px "Fira Sans";padding:0 12px;min-height:36px;border-radius:999px;cursor:pointer;transition:all .2s var(--ease)}
+.chip{border:1px solid var(--border);background:var(--card);color:var(--fg-soft);font:600 12.5px "Fira Sans";padding:0 12px;min-height:36px;border-radius:999px;cursor:pointer;transition:background .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease),transform .16s var(--ease)}
 .chip:hover{border-color:var(--primary-2)}
 .chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .count{font:500 13px "Fira Code",monospace;color:var(--muted);margin-left:auto}
@@ -223,7 +223,7 @@ mark{background:var(--accent-soft);color:inherit;border-radius:3px;padding:0 2px
 @media (max-width:580px){.features{grid-template-columns:1fr}}
 .feat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);transition:transform .3s var(--ease),box-shadow .3s,border-color .3s}
 .feat:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary-2)}
-.feat-ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--info-soft);color:var(--primary);margin-bottom:14px;transition:transform .4s var(--ease)}
+.feat-ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--info-soft);color:var(--primary);margin-bottom:14px;transition:transform .25s var(--ease)}
 .feat:hover .feat-ic{transform:rotate(-8deg) scale(1.08)}
 .feat-ic svg{width:22px;height:22px}
 .feat h3{margin:0 0 6px;font-size:17px}
@@ -261,6 +261,13 @@ footer{padding:40px 0 56px;border-top:1px solid var(--border);color:var(--muted)
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
   .reveal,.stagger>*{opacity:1;transform:none}
 }
+/* Polish 18.11.2026: Charles Liu's UI rules + Emil Kowalski motion rules */
+a{text-underline-offset:.2em}
+h1,h2,h3{text-wrap:balance}
+p{text-wrap:pretty}
+sup{line-height:0;position:relative;vertical-align:baseline;top:-.5em}
+.btn-primary:active,.btn-ghost:active,.icon-btn:active,.chip:active{transform:scale(.97);transition-duration:.1s}
+@media (hover:none){.icon-btn:hover,.btn-primary:hover,.btn-ghost:hover,.step:hover,.feat:hover,.feat:hover .feat-ic,.skill:hover{transform:none}}
 </style>
 </head>
 <body>
@@ -356,7 +363,7 @@ footer{padding:40px 0 56px;border-top:1px solid var(--border);color:var(--muted)
     <div class="sec-head reveal">
       <span class="kicker">01 · The problem</span>
       <h2>Purchasing lived in PDFs, emails and memory.</h2>
-      <p>With many projects running at once, nobody could quickly answer "Has this been ordered? Has it arrived? Where's the invoice?" I built the tool to answer all three in seconds.</p>
+      <p>With many projects running at once, nobody could quickly answer “Has this been ordered? Has it arrived? Where’s the invoice?” I built the tool to answer all three in seconds.</p>
     </div>
     <div class="ba stagger">
       <div class="ba-card before">
@@ -386,7 +393,7 @@ footer{padding:40px 0 56px;border-top:1px solid var(--border);color:var(--muted)
     <div class="sec-head reveal">
       <span class="kicker">02 · Workflow</span>
       <h2>From request to closed order, end to end.</h2>
-      <p>Each stage feeds the next automatically. Data is entered once, then reused everywhere it's needed.</p>
+      <p>Each stage feeds the next automatically. Data is entered once, then reused everywhere it’s needed.</p>
     </div>
     <div class="flow stagger" id="flow">
       <div class="flow-line"><i></i></div>
@@ -405,7 +412,7 @@ footer{padding:40px 0 56px;border-top:1px solid var(--border);color:var(--muted)
     <div class="sec-head reveal">
       <span class="kicker">03 · Live demo</span>
       <h2>Try the three main views.</h2>
-      <p>This is a faithful web recreation of the workbook's Dashboard, Supply Chain Master and PO Tracker. Search works the way it does in Excel: type a job, PR, PO, item or supplier.</p>
+      <p>This is a faithful web recreation of the workbook’s Dashboard, Supply Chain Master and PO Tracker. Search works the way it does in Excel: type a job, PR, PO, item or supplier.</p>
     </div>
 
     <div class="tabs reveal" role="tablist" aria-label="Workbook views" id="tabs">
@@ -535,7 +542,7 @@ status = IIf(recv >= qty, <span class="s">"RECEIVED"</span>, _
 
 <footer>
   <div class="wrap">
-    <div class="disclaimer"><svg><use href="#i-shield"/></svg><span><b>Confidentiality.</b> This page is a portfolio recreation. Company names, suppliers, people, items, job numbers and prices are replaced with placeholders such as "Item 1", "PR-001" and "Supplier A".</span></div>
+    <div class="disclaimer"><svg><use href="#i-shield"/></svg><span><b>Confidentiality.</b> This page is a portfolio recreation. Company names, suppliers, people, items, job numbers and prices are replaced with placeholders such as “Item 1”, “PR-001” and “Supplier A”.</span></div>
     <div class="foot">
       <span>© 2026 Osama Sunaallah · Industrial Engineer, Supply Chain &amp; Planning</span>
       <a class="btn btn-ghost" href="https://www.linkedin.com/in/osamasunaallah" target="_blank" rel="noopener"><svg><use href="#i-in"/></svg>Connect on LinkedIn</a>
