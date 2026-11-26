@@ -15,7 +15,8 @@
 <link rel="icon" href="thumbnail.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- 26.11.2026 (Osama: heroes too slow to appear): font stylesheets load in the background so the first paint never waits for them -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700;800&display=swap"></noscript>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>document.documentElement.classList.add("js")</script>
 <style>
@@ -97,7 +98,7 @@ h1 .hl{color:var(--accent-ink);text-decoration:underline;text-decoration-color:v
 /* hero visual */
 .stack{position:relative;height:420px;perspective:1400px}
 .pane{position:absolute;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden}
-.pane .bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border);font:600 12px "Fira Code",monospace;color:#FFFFFF;background:var(--primary)}
+.pane .bar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--border);font:600 12px "Fira Code",monospace;color:var(--on-primary);background:var(--primary)}
 .pane .bar i{width:9px;height:9px;border-radius:50%;background:var(--grey-soft);display:inline-block}
 .pane.p1{inset:0 60px 90px 0;transform:rotateY(-8deg) rotateX(4deg);animation:rise 1s var(--ease) both}
 .pane.p2{right:0;bottom:0;width:58%;transform:rotateY(-8deg) rotateX(4deg) translateZ(60px);animation:rise 1s .18s var(--ease) both}
@@ -197,7 +198,7 @@ h2{font-size:clamp(28px,3.6vw,40px);line-height:1.12;letter-spacing:-.025em;marg
 .count{font:500 13px "Fira Code",monospace;color:var(--muted);margin-left:auto}
 .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:auto;max-height:520px}
 table{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px;min-width:860px}
-thead th{position:sticky;top:0;z-index:1;background:var(--primary);color:#fff;text-align:left;font-weight:600;font-size:13px;padding:11px 12px;white-space:nowrap}
+thead th{position:sticky;top:0;z-index:1;background:var(--primary);color:var(--on-primary);text-align:left;font-weight:600;font-size:13px;padding:11px 12px;white-space:nowrap}
 :root[data-theme="dark"] thead th{color:var(--on-primary)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) thead th{color:var(--on-primary)}}
 tbody td{padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap;color:var(--fg-soft)}
@@ -268,6 +269,24 @@ p{text-wrap:pretty}
 sup{line-height:0;position:relative;vertical-align:baseline;top:-.5em}
 .btn-primary:active,.btn-ghost:active,.icon-btn:active,.chip:active{transform:scale(.97);transition-duration:.1s}
 @media (hover:none){.icon-btn:hover,.btn-primary:hover,.btn-ghost:hover,.step:hover,.feat:hover,.feat:hover .feat-ic,.skill:hover{transform:none}}
+/* Apple design pass (26.11.2026, Osama: "apply the apple design skill"). No layout or colour changes:
+   taps answer at once (no double-tap-zoom wait, no grey flash), light/dark switches cross-fade instead of jumping,
+   and the page follows the system settings "Reduce transparency" and "Increase contrast". */
+a,button,summary,label,select,[role="button"]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.35s;animation-timing-function:ease}
+@media (prefers-reduced-transparency:reduce){header.nav{background:var(--bg)}}
+@media (prefers-contrast:more){:root[data-theme="light"],:root:not([data-theme]){--border:#9AA39C}:root[data-theme="dark"]{--border:#5A675E}}
+/* Impeccable pass (26.11.2026, Osama: "apply impeccable"; polish, layout kept): no label above the headline,
+   numbers that line up in figures and tables, and the browser's own surfaces in the site's colours */
+[data-count],.kpis,.mini-kpis,td,th,.stat,.stats{font-variant-numeric:tabular-nums}
+::selection{background:var(--accent);color:#16211A}
+html{scrollbar-color:color-mix(in srgb,var(--accent-ink) 55%,var(--bg-2)) var(--bg)}
+input,textarea{caret-color:var(--accent-ink)}
+/* 26.11.2026 (Osama: heroes too slow to appear): the hero is complete on the first frame: no fade-in, the dashboard panes,
+   bars and tracker rows are already in place. Scroll reveals below the hero are unchanged. */
+.hero .reveal{opacity:1;transform:none;transition:none}
+.hero .pane.p1,.hero .pane.p2,.hero .mini-bars span{animation:none}
+.hero .mini-row{opacity:1;animation:none}
 </style>
 </head>
 <body>
@@ -313,7 +332,6 @@ sup{line-height:0;position:relative;vertical-align:baseline;top:-.5em}
   <div class="wrap">
     <div class="hero-grid">
       <div class="reveal">
-        <span class="eyebrow">Excel, VBA and procurement automation</span>
         <h1>One workbook that runs purchasing, <span class="hl">from request to invoice.</span></h1>
         <p class="lead">I designed and built a supply chain control system for a growing engineering company. It turns purchase request and purchase order PDFs into live trackers, links every line to its invoice, and sends the team daily status reports, all inside Excel.</p>
         <div class="cta">
@@ -553,7 +571,7 @@ const isDark=()=>root.dataset.theme? root.dataset.theme==='dark' : matchMedia('(
 const setIcon=()=>themeBtn.innerHTML=`<svg aria-hidden="true"><use href="#i-${isDark()?'sun':'moon'}"/></svg>`;
 try{const t=localStorage.getItem('scc-theme'); if(t) root.dataset.theme=t;}catch(e){}
 setIcon();
-themeBtn.addEventListener('click',()=>{root.dataset.theme=isDark()?'light':'dark';try{localStorage.setItem('scc-theme',root.dataset.theme)}catch(e){};setIcon();drawCharts();});
+themeBtn.addEventListener('click',()=>{const go=()=>{root.dataset.theme=isDark()?'light':'dark';try{localStorage.setItem('scc-theme',root.dataset.theme)}catch(e){};setIcon();drawCharts();};document.startViewTransition?document.startViewTransition(go):go()});
 
 /* nav */
 const nav=document.getElementById('nav');
@@ -564,7 +582,7 @@ links.forEach(a=>{const s=document.querySelector(a.getAttribute('href')); if(s) 
 
 /* counters */
 const fmt=n=>n.toLocaleString('en-US');
-function count(el){const end=+el.dataset.count,suf=el.dataset.suffix||'';if(reduce){el.textContent=fmt(end)+suf;return}
+function count(el){const end=+el.dataset.count,suf=el.dataset.suffix||'';if(reduce||el.closest('.hero')){/* 26.11.2026: hero numbers are final on arrival */el.textContent=fmt(end)+suf;return}
   const t0=performance.now(),d=1400;const step=t=>{const p=Math.min(1,(t-t0)/d),e=1-Math.pow(1-p,4);el.textContent=fmt(Math.round(end*e))+suf;if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step);}
 
 /* reveal */
